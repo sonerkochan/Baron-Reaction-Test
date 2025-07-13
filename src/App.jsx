@@ -6,6 +6,13 @@ function App() {
   const [isRunning, setIsRunning] = useState(false)
   const [result, setResult] = useState(null)
   const [wasSmited, setWasSmited] = useState(false)
+  const [summonerName, setSummonerName] = useState('')
+
+  const leaderboard = [
+    { name: 'SejFury', score: 1200 },
+    { name: 'Commando1000', score: 1138 },
+    { name: 'Crapten', score: 1184 }
+  ]
 
   useEffect(() => {
     let interval
@@ -15,13 +22,12 @@ function App() {
           const drop = Math.floor(Math.random() * (500 - 50 + 1)) + 50
           return Math.max(prev - drop, 0)
         })
-      }, 200) // 0.2 seconds
+      }, 200)
     }
 
     return () => clearInterval(interval)
   }, [isRunning, health])
 
-  // Detect if health reaches 0 and no smite happened
   useEffect(() => {
     if (health === 0 && isRunning) {
       setIsRunning(false)
@@ -60,34 +66,77 @@ function App() {
     setResult(null)
     setIsRunning(true)
     setWasSmited(false)
+    setSummonerName('')
   }
 
+  const handleSummonerNameChange = (e) => {
+    setSummonerName(e.target.value)
+  }
+
+  const submitSummonerName = () => {
+    alert(`Summoner Name submitted: ${summonerName}`)
+    setSummonerName('')
+  }
+
+  const isSuccessSmite = result && (result.startsWith('✅') || result.startsWith('🟢') || result.startsWith('🟡') || result.startsWith('🔴'))
+
   return (
-    <div className="app">
-      <h1>LoL Baron Smite Reaction Test</h1>
-      <div className="healthbar-container">
-        <div
-          className="healthbar"
-          style={{
-            width: `${(health / 11080) * 100}%`,
-            background: health < 2000
-              ? 'linear-gradient(to top, #ff3333, #ff6666)'
-              : 'linear-gradient(to top, #2aff00, #5fff33)'
-          }}
-        />
-        <div className="ticks">
-          {[...Array(11)].map((_, i) => (
-            <div key={i} className="tick" />
-          ))}
-        </div>
+    <>
+      {/* Leaderboard is outside the main app container now */}
+      <div className="leaderboard">
+        <h2>TODAY'S BEST</h2>
+        <ol>
+          {leaderboard
+            .sort((a, b) => b.score - a.score)
+            .map((player, i) => (
+              <li key={i}>
+                <strong>{player.name}</strong> - {player.score} HP
+              </li>
+            ))}
+        </ol>
+
+        {isSuccessSmite && (
+          <div className="summoner-input">
+            <input
+              type="text"
+              placeholder="Enter summoner name"
+              value={summonerName}
+              onChange={handleSummonerNameChange}
+            />
+            <button onClick={submitSummonerName} disabled={!summonerName.trim()}>
+              Submit
+            </button>
+          </div>
+        )}
       </div>
-      <p>Baron HP: {health}</p>
-      {result && <h2>{result}</h2>}
-      <button onClick={startTest} disabled={isRunning}>
-        {isRunning ? 'Running...' : 'Start Test'}
-      </button>
-      <p>Press <strong>F</strong> to Smite!</p>
-    </div>
+
+      {/* Main app container */}
+      <div className="app">
+        <h1>LoL Baron Smite Reaction Test</h1>
+        <div className="healthbar-container">
+          <div
+            className="healthbar"
+            style={{
+              width: `${(health / 11080) * 100}%`,
+              background: health < 2000
+                ? 'linear-gradient(to top, #ff3333, #ff6666)'
+                : 'linear-gradient(to top, #2aff00, #5fff33)'
+            }}
+          />
+          <div className="ticks">
+            {[...Array(11)].map((_, i) => (
+              <div key={i} className="tick" />
+            ))}
+          </div>
+        </div>
+        <p>Baron HP: {health}</p>
+        {result && <h2>{result}</h2>}
+        <button onClick={startTest} disabled={isRunning}>
+          {isRunning ? 'Running...' : 'Start Test'}
+        </button>
+        <p>Press <strong>F</strong> to Smite!</p>
+      </div>
+    </>
   )
 }
 
