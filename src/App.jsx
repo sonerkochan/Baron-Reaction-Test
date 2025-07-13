@@ -40,11 +40,10 @@ function App() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (
-      (e.key === 'f' || e.key === 'F' || e.key === 'ф' || e.key === 'Ф') &&
-      isRunning &&
-      health > 0
-      )
-      {
+        (e.key === 'f' || e.key === 'F' || e.key === 'ф' || e.key === 'Ф') &&
+        isRunning &&
+        health > 0
+      ) {
         setIsRunning(false)
         setWasSmited(true)
 
@@ -66,6 +65,14 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isRunning, health])
 
+  useEffect(() => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({})
+    } catch (e) {
+      console.error("AdSense error", e)
+    }
+  }, [])
+
   const startTest = () => {
     setHealth(11080)
     setResult(null)
@@ -83,11 +90,12 @@ function App() {
     setSummonerName('')
   }
 
-  const isSuccessSmite = result && (result.startsWith('✅') || result.startsWith('🟢') || result.startsWith('🟡') || result.startsWith('🔴'))
+  const isSuccessSmite = result &&
+    (result.startsWith('✅') || result.startsWith('🟢') || result.startsWith('🟡') || result.startsWith('🔴'))
 
   return (
     <>
-      {/* Leaderboard is outside the main app container now */}
+      {/* Leaderboard */}
       <div className="leaderboard">
         <h2>TODAY'S BEST</h2>
         <ol>
@@ -113,6 +121,17 @@ function App() {
             </button>
           </div>
         )}
+      </div>
+
+      {/* AdSense banner */}
+      <div style={{ margin: '20px 0', textAlign: 'center' }}>
+        <ins className="adsbygoogle"
+          style={{ display: 'block' }}
+          data-ad-client="ca-pub-7999586967881616"
+          data-ad-slot="1234567890" // 👉 Replace with your actual Ad Slot ID
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
       </div>
 
       {/* Main app container */}
