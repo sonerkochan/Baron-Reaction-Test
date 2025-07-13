@@ -39,7 +39,12 @@ function App() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if ((e.key === 'f' || e.key === 'F') && isRunning && health > 0) {
+      if (
+      (e.key === 'f' || e.key === 'F' || e.key === 'ф' || e.key === 'Ф') &&
+      isRunning &&
+      health > 0
+      )
+      {
         setIsRunning(false)
         setWasSmited(true)
 
